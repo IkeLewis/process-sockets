@@ -34,3 +34,22 @@ Process Sockets API
 | ps-drain-input   | Read all available characters from the socket's input |
 |                  | stream and return the result as a string.             |
 |------------------+-------------------------------------------------------|
+
+Buffered Streams API
+--------------------
+
+|-------------------------+-------------------------------------------------|
+| bs-make-buffered-stream | Make a new buffered stream.                     |
+|-------------------------+-------------------------------------------------|
+| bs-read                 | Read/unread a character from the stream.        |
+|-------------------------+-------------------------------------------------|
+| bs-write                | Write a string to the stream.                   |
+|-------------------------+-------------------------------------------------|
+| bs-drain-input          | Read all available characters from the stream's |
+|                         | buffer and return the result as a string.       |
+|-------------------------+-------------------------------------------------|
+
+Examples
+--------
+
+TODO
