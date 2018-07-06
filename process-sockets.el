@@ -41,7 +41,7 @@
 ;; TODO: simplify this
 (defun* ps-make-socket (process &optional (ps-stream-buf-size ps-stream-buf-size))
   "Creates a socket for communicating with `process'."
-  (unless (>= (emacs-major-version) 26)
+  (unless (>= emacs-major-version 26)
     (error "Emacs 26+ is required"))
   (let* ((proc process)
 	 (sock-mutex (make-mutex))
