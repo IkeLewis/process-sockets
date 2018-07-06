@@ -98,5 +98,15 @@
 
 ;;; Code:
 
+;; For 'defun*'
+(require 'cl)
+
+;;; Customizable Variables
+
+(defvar bs-debug nil "Set to true to log debugging info in the *Messages* buffer.")
+
+(defvar bs-buf-size (* 64 1024) "The default buffer size for buffered streams.")
+
+
 (provide 'buffered-streams)
 ;;; buffered-streams.el ends here
