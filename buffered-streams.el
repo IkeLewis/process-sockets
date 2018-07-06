@@ -168,6 +168,103 @@ of range, then an out-of-range error is thrown."
 	  (underflow-handler (cdr (assoc 'underflow-handler env))))
      ,@body))
 
+;;; Public API
+
+(defun* bs-make-buffered-stream (&optional (buf-size bs-buf-size)
+					   (underflow-handler
+					    (lambda ()
+					      (error "Buffer underflow (plain)"))))
+  "Create a new buffered stream."
+  (let* ( ;; The environment
+	 (env `((num-writ . ,(bs-make-var 0))
+		(write-pos . ,(bs-make-var 0))
+		(num-read . ,(bs-make-var buf-size))
+		(read-pos . ,(bs-make-var 0))
+		(buf . ,(make-string buf-size 0))
+		(underflow-handler .,underflow-handler))))
+    (lambda (fn-or-var &rest args)
+      (case fn-or-var
+	((env)
+	 env)
+	(t
+	 (error "Invalid arguments"))))))
+
+(defun bs-read (stream &optional unread)
+  "Reads a character from `stream' if `unread' is nil.  Otherwise
+unreads the character `unread' from `stream'."
+  ;; This function must support two kinds of calls:
+  ;;
+  ;; • When it is called with no arguments, it should return the next
+  ;;   character.
+  ;;
+  ;; • When it is called with one argument (always a character), it
+  ;;   should save the argument and arrange to return the argument on
+  ;;   the next call.  This is called “unreading” the character; it
+  ;;   happens when the Lisp reader reads one character too many and
+  ;;   wants to put it back where it came from.  In this case, it
+  ;;   makes no difference what value is returned.
+  (bs-with-buffered-stream
+   stream
+   (let ((buf-size (length buf)))
+     (cond (unread
+	    (bs-debug "unreading %s" unread)
+	    (if (= (bs-var-ref num-writ) buf-size)
+		(progn
+		  (error "Buffer overflow (unread)"))
+	      (prog1 unread
+		(bs-inc-var! num-read  -1)
+		(bs-inc-var! num-writ 1)
+		;; unreading does not alter write-pos
+		(bs-dec-var-mod-n! read-pos 1 buf-size))))
+	   ((= (bs-var-ref num-read) buf-size)
+	    (bs-debug "handling undeflow")
+	    (bs-debug "got input %s"
+		      (funcall underflow-handler))
+	    (bs-read stream))
+	   (t
+	    (let ((res (prog1 (aref buf (bs-var-ref read-pos))
+			 (bs-inc-var! num-read  1)
+			 (bs-inc-var! num-writ -1)
+			 ;; reading does not alter write-pos
+			 (bs-inc-var-mod-n! read-pos 1 buf-size))))
+	      (bs-debug "read %c" res)
+	      res))))))
+
+(defun bs-write (stream string)
+  "Writes the `string' to the `stream'."
+  (bs-with-buffered-stream
+   stream
+   (let ((buf-size (length buf)))
+     (cond ((> (+ (bs-var-ref num-writ) (length string)) buf-size)
+	    (error "Buffer overflow"))
+	   (t
+	    (bs-debug "wrote '%s'" string)
+	    (prog1 (bs-memcpy! string buf (bs-var-ref write-pos))
+	      (bs-inc-var! num-writ (length string))
+	      (bs-dec-var! num-read (length string))
+	      ;; writing does not alter the read position
+	      (bs-inc-var-mod-n! write-pos (length string) buf-size)))))))
+
+(defun bs-drain-input (stream)
+  "Drains (reads all characters) currently in the stream's buffer
+and returns the result as a string."
+  (bs-with-buffered-stream
+   stream
+   (let* ((buf-size (length buf))
+	  (after-last-pos (mod (+ (bs-var-ref read-pos)
+				  (bs-var-ref num-writ))
+			       buf-size)))
+     ;; after-last-pos -- the position just after the last
+     ;; character to be read
+     (prog1
+	 (if (< after-last-pos (bs-var-ref read-pos))
+	     (concat (substring buf (bs-var-ref read-pos))
+		     (substring buf 0 after-last-pos))
+	   (substring buf (bs-var-ref read-pos) after-last-pos))
+       (bs-inc-var-mod-n! read-pos (bs-var-ref num-writ) buf-size)
+       (bs-set-var! num-read buf-size)
+       ;; reading does not alter the write position
+       (bs-set-var! num-writ 0)))))
 
 (provide 'buffered-streams)
 ;;; buffered-streams.el ends here
