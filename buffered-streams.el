@@ -155,6 +155,19 @@ of range, then an out-of-range error is thrown."
   (when bs-debug
     (apply 'message (concat "bs-debug: " fmt-str "\n") args)))
 
+;;; Private Macros and Functions
+
+(defmacro bs-with-buffered-stream (stream &rest body)
+  "Evaluate `body' in the environment of `stream'."
+  `(let* ((env (funcall ,stream 'env))
+	  (num-writ (cdr (assoc 'num-writ env)))
+	  (write-pos (cdr (assoc 'write-pos env)))
+	  (num-read (cdr (assoc 'num-read env)))
+	  (read-pos (cdr (assoc 'read-pos env)))
+	  (buf (cdr (assoc 'buf env)))
+	  (underflow-handler (cdr (assoc 'underflow-handler env))))
+     ,@body))
+
 
 (provide 'buffered-streams)
 ;;; buffered-streams.el ends here
