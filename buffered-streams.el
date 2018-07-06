@@ -107,6 +107,28 @@
 
 (defvar bs-buf-size (* 64 1024) "The default buffer size for buffered streams.")
 
+;;; First-class variables
+
+(defun bs-make-var (val)
+  (list val))
+
+(defalias 'bs-var-ref 'car)
+
+(defmacro bs-set-var! (var new-val)
+  `(setf (car ,var) ,new-val))
+
+(defmacro bs-inc-var! (var amt)
+  `(setf (car ,var) (+ (car ,var) ,amt)))
+
+(defmacro bs-dec-var! (var amt)
+  `(setf (car ,var) (- (car ,var) ,amt)))
+
+(defmacro bs-inc-var-mod-n! (var amt n)
+  `(setf (car ,var) (mod (+ (car ,var) ,amt) ,n)))
+
+(defmacro bs-dec-var-mod-n! (var amt n)
+  `(setf (car ,var) (mod (- (car ,var) ,amt) ,n)))
+
 
 (provide 'buffered-streams)
 ;;; buffered-streams.el ends here
