@@ -41,20 +41,18 @@ Example
 
 Open up an ELISP REPL in Emacs, e.g. via M-x ielm.
 
-ELISP\> (defvar my-proc (start-process "bash-proc1" (get-buffer-create "bash-proc1") "/bin/bash"))
-
+```el
+ELISP> (defvar my-proc (start-process "bash-proc1" (get-buffer-create "bash-proc1") "/bin/bash"))
 my-proc
 
-ELISP\> (defvar my-sock (ps-make-socket my-proc))
-
+ELISP> (defvar my-sock (ps-make-socket my-proc))
 my-sock
 
-ELISP\> (ps-write-string my-sock "PS1=\"\"; echo Hello world!\n")
-
+ELISP> (ps-write-string my-sock "PS1=\"\"; echo Hello world!\n")
 nil
 
-ELISP\> (ps-drain-input my-sock)
-
+ELISP> (ps-drain-input my-sock)
 "Hello world!\n"
 
-ELISP\>
+ELISP>
+```
