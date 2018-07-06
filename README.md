@@ -24,8 +24,7 @@ Process Sockets API
  ps-write-sexp    | Write an sexp to the socket.
  ps-read-char     | Read a character from the socket.
  ps-write-string  | Write a string to the socket.
- ps-drain-input   | Read all available characters from the socket's input
-                  | stream and return the result as a string.
+ ps-drain-input   | Return all available characters from the socket's input stream as a string.
 
 Buffered Streams API
 --------------------
@@ -35,8 +34,7 @@ Buffered Streams API
  bs-make-buffered-stream | Make a new buffered stream.
  bs-read                 | Read/unread a character from the stream.
  bs-write                | Write a string to the stream.
- bs-drain-input          | Read all available characters from the stream's
-                         | buffer and return the result as a string.
+ bs-drain-input          | Return all available characters from the stream's buffer as a string.
 
 Examples
 --------
