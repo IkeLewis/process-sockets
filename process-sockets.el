@@ -29,5 +29,13 @@
 
 ;;; Code:
 
+(require 'cl)
+(require 'buffered-streams)
+
+;;; Customizable Variables
+
+(defvar ps-stream-buf-size (* 64 1024) "The default buffer size for the socket's streams.")
+
+
 (provide 'process-sockets)
 ;;; process-sockets.el ends here
