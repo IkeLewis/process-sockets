@@ -149,6 +149,12 @@ of range, then an out-of-range error is thrown."
 	   (store-substring dest 0 (substring src (- (length dest)
 						     dest-offset))))))
 
+;;; Debugging/logging functions
+
+(defun bs-debug (fmt-str &rest args)
+  (when bs-debug
+    (apply 'message (concat "bs-debug: " fmt-str "\n") args)))
+
 
 (provide 'buffered-streams)
 ;;; buffered-streams.el ends here
