@@ -129,6 +129,26 @@
 (defmacro bs-dec-var-mod-n! (var amt n)
   `(setf (car ,var) (mod (- (car ,var) ,amt) ,n)))
 
+;;; Utility functions
+
+(defun bs-memcpy! (src dest dest-offset)
+  "Copy `src' to `dest' starting at offset `dest-offset'; if the
+length of `src' plus `dest-offset' is greater than the length of
+`dest', then the writing wraps.  If `src' is longer then `dest'
+then a buffer overflow error is thrown.  If `dest-offset' is out
+of range, then an out-of-range error is thrown."
+  (unless (<= (length src) (length dest))
+    (error "Buffer overflow"))
+  (unless (< dest-offset (length dest))
+    (error "Invalid offset '%s'" dest-offset))
+
+  (if (<= (+ dest-offset (length src)) (length dest))
+      (store-substring dest dest-offset src)
+    (progn (store-substring dest dest-offset (substring src 0 (- (length dest)
+								 dest-offset)))
+	   (store-substring dest 0 (substring src (- (length dest)
+						     dest-offset))))))
+
 
 (provide 'buffered-streams)
 ;;; buffered-streams.el ends here
