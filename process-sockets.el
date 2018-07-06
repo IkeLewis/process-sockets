@@ -76,11 +76,11 @@
 	 (read-sexp (lambda ()
 		      (read input-stream)))
 	 (write-sexp (lambda (sexp)
-		       (fc output-stream (format "%s\n" sexp))))
+		       (funcall output-stream (format "%s\n" sexp))))
 	 (read-char (lambda ()
-		      (fc input-stream)))
+		      (funcall input-stream)))
 	 (write-string (lambda (str)
-			 (fc output-stream str)))
+			 (funcall output-stream str)))
 	 (drain-input (lambda ()
 			(bs-drain-input bis))))
     ;; Write output from the process to the socket's input
@@ -118,28 +118,28 @@
 	 (error "Invalid arguments"))))))
 
 (defun ps-input-stream (ps)
-  (ps 'input-stream))
+  (funcall ps 'input-stream))
 
 (defun ps-output-stream (ps)
-  (ps 'output-stream))
+  (funcall ps 'output-stream))
 
 (defun ps-read-char (ps)
-  (ps 'read-char))
+  (funcall ps 'read-char))
 
 (defun ps-read-sexp (ps)
-  (ps 'read-sexp))
+  (funcall ps 'read-sexp))
 
 (defun ps-write-string (ps string)
-  (ps 'write-string string))
+  (funcall ps 'write-string string))
 
 (defun ps-write-sexp (ps sexp)
-  (ps 'write-sexp sexp))
+  (funcall ps 'write-sexp sexp))
 
 (defun ps-drain-input (ps)
-  (ps 'drain-input))
+  (funcall ps 'drain-input))
 
 (defun ps-close (ps)
-  (ps 'close))
+  (funcall ps 'close))
 
 (provide 'process-sockets)
 ;;; process-sockets.el ends here
