@@ -14,40 +14,29 @@ Pull requests are greatly appreciated.
 Process Sockets API
 -------------------
 
-|------------------+-------------------------------------------------------|
-| ps-make-socket   | Make a new process socket.                            |
-|------------------+-------------------------------------------------------|
-| ps-close         | Close the socket.                                     |
-|------------------+-------------------------------------------------------|
-| ps-input-stream  | Return the socket's buffered input stream.            |
-|------------------+-------------------------------------------------------|
-| ps-output-stream | Return the socket's buffered output stream.           |
-|------------------+-------------------------------------------------------|
-| ps-read-sexp     | Read an sexp from the socket.                         |
-|------------------+-------------------------------------------------------|
-| ps-write-sexp    | Write an sexp to the socket.                          |
-|------------------+-------------------------------------------------------|
-| ps-read-char     | Read a character from the socket.                     |
-|------------------+-------------------------------------------------------|
-| ps-write-string  | Write a string to the socket.                         |
-|------------------+-------------------------------------------------------|
-| ps-drain-input   | Read all available characters from the socket's input |
-|                  | stream and return the result as a string.             |
-|------------------+-------------------------------------------------------|
+ Function         | Short Description
+------------------|------------------------------------------------------
+ ps-make-socket   | Make a new process socket.
+ ps-close         | Close the socket.
+ ps-input-stream  | Return the socket's buffered input stream.
+ ps-output-stream | Return the socket's buffered output stream.
+ ps-read-sexp     | Read an sexp from the socket.
+ ps-write-sexp    | Write an sexp to the socket.
+ ps-read-char     | Read a character from the socket.
+ ps-write-string  | Write a string to the socket.
+ ps-drain-input   | Read all available characters from the socket's input
+                  | stream and return the result as a string.
 
 Buffered Streams API
 --------------------
 
-|-------------------------+-------------------------------------------------|
-| bs-make-buffered-stream | Make a new buffered stream.                     |
-|-------------------------+-------------------------------------------------|
-| bs-read                 | Read/unread a character from the stream.        |
-|-------------------------+-------------------------------------------------|
-| bs-write                | Write a string to the stream.                   |
-|-------------------------+-------------------------------------------------|
-| bs-drain-input          | Read all available characters from the stream's |
-|                         | buffer and return the result as a string.       |
-|-------------------------+-------------------------------------------------|
+ Function                | Short Description
+ ------------------------|------------------------------------------------
+ bs-make-buffered-stream | Make a new buffered stream.
+ bs-read                 | Read/unread a character from the stream.
+ bs-write                | Write a string to the stream.
+ bs-drain-input          | Read all available characters from the stream's
+                         | buffer and return the result as a string.
 
 Examples
 --------
