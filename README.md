@@ -36,7 +36,17 @@ Buffered Streams API
  bs-write                | Write a string to the stream.
  bs-drain-input          | Return all available characters from the stream's buffer as a string.
 
-Examples
---------
+Example
+-------
 
-TODO
+Open up an ELISP REPL in Emacs, e.g. via M-x ielm.
+
+ELISP> (defvar my-proc (start-process "bash-proc1" (get-buffer-create "bash-proc1") "/bin/bash"))
+my-proc
+ELISP> (defvar my-sock (ps-make-socket my-proc))
+my-sock
+ELISP> (ps-write-string my-sock "PS1=\"\"; echo Hello world!\n")
+nil
+ELISP> (ps-drain-input my-sock)
+"Hello world!\n"
+ELISP>
