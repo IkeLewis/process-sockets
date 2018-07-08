@@ -1,6 +1,6 @@
 ;;; buffered-streams.el --- Buffered streams for Emacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 Free Software Foundation, Inc.
+;; Copyright (C) 2018 Isaac Lewis
 
 ;; Author: Isaac Lewis <isaac.b.lewis@gmail.com>
 ;; Version: 1.0.0
