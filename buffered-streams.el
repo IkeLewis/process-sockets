@@ -4,7 +4,7 @@
 
 ;; Author: Isaac Lewis <isaac.b.lewis@gmail.com>
 ;; Version: 1.0.0
-;; Keywords: buffered, stream
+;; Keywords: comm
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
