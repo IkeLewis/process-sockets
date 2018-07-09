@@ -1,0 +1,11 @@
+This is process-sockets.info, produced by makeinfo version 6.5 from
+process-sockets.texinfo.
+
+INFO-DIR-SECTION Emacs
+START-INFO-DIR-ENTRY
+* Process Sockets: (process-sockets.info).  Process sockets for GNU Emacs
+END-INFO-DIR-ENTRY
+
+
+File: process-sockets.info,  Node: Top,  Next: Process Sockets,  Up: (dir)
+
