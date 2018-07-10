@@ -19,23 +19,71 @@ socket with buffered streams.  Now that Emacs 26 supports multiple
 threads, such sockets are easier to implement.
 * Menu:
 
-* Pull Requests!::
+* Installation::
+* Quickstart rocket::
 * Process Sockets API::
 * Buffered Streams API::
-* Example::
+* Unit testing::
+* Benchmarking::
+* Pull Requests!::
 
 
-File: process-sockets-temp.info,  Node: Pull Requests!,  Next: Process Sockets API,  Up: Process Sockets
+File: process-sockets.info,  Node: Installation,  Next: Quickstart rocket,  Up: Process Sockets
 
-1.1 Pull Requests!
-==================
+1.1 Installation
+================
 
-Pull requests are greatly appreciated.
+Once the API becomes stable, a recipe will likely be added to MELPA. In
+that case, MELPA will be the preferred way to install.
+
+For now, Cask may be used to manually build a bleeding edge version of
+the package that can be locally installed by Emacs.
+
+  1. Run cask package in a terminal to build the package.
+  2. Run package-install-file from Emacs.
+
+Alternatively, old school manual installation may be used.
+
+  1. In your Emacs init file:
+
+       a. Add the process-sockets directory to your load path.
+       b. Include a line containing (require ’procces-sockets)
+
+  2. Install the doc/process-sockets.info file.  See
+     <https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Texinfo-documentation.html>
 
 
-File: process-sockets-temp.info,  Node: Process Sockets API,  Next: Buffered Streams API,  Prev: Pull Requests!,  Up: Process Sockets
+File: process-sockets.info,  Node: Quickstart rocket,  Next: Process Sockets API,  Prev: Installation,  Up: Process Sockets
 
-1.2 Process Sockets API
+1.2 Quickstart :rocket:
+=======================
+
+  1. Install via MELPA (or manually).
+  2. Open up a REPL in Emacs via M-x ielm and try it out:
+
+     ELISP> (require 'process-sockets)
+     process-sockets
+
+     ELISP> (defvar my-proc (start-process "bash-proc1"
+                                           (get-buffer-create "bash-proc1")
+                                           "/bin/bash"))
+     my-proc
+
+     ELISP> (defvar my-sock (ps-make-socket my-proc))
+     my-sock
+
+     ELISP> (ps-write-string my-sock "PS1=\"\"; echo Hello world!\n")
+     nil
+
+     ELISP> (ps-drain-input my-sock)
+     "Hello world!\n"
+
+     ELISP>
+
+
+File: process-sockets.info,  Node: Process Sockets API,  Next: Buffered Streams API,  Prev: Quickstart rocket,  Up: Process Sockets
+
+1.3 Process Sockets API
 =======================
 
 Function            Short Description
@@ -52,9 +100,9 @@ ps-drain-input      Return all available characters from the socket’s
                     input stream as a string.
 
 
-File: process-sockets-temp.info,  Node: Buffered Streams API,  Next: Example,  Prev: Process Sockets API,  Up: Process Sockets
+File: process-sockets.info,  Node: Buffered Streams API,  Next: Unit testing,  Prev: Process Sockets API,  Up: Process Sockets
 
-1.3 Buffered Streams API
+1.4 Buffered Streams API
 ========================
 
 Function                 Short Description
@@ -66,41 +114,49 @@ bs-drain-input           Return all available characters from the
                          stream’s buffer as a string.
 
 
-File: process-sockets-temp.info,  Node: Example,  Prev: Buffered Streams API,  Up: Process Sockets
+File: process-sockets.info,  Node: Unit testing,  Next: Benchmarking,  Prev: Buffered Streams API,  Up: Process Sockets
 
-1.4 Example
-===========
+1.5 Unit testing
+================
 
-Open up an ELISP REPL in Emacs, e.g.  via M-x ielm.
+TODO
 
-ELISP> (defvar my-proc (start-process "bash-proc1" (get-buffer-create "bash-proc1") "/bin/bash"))
-my-proc
+
+File: process-sockets.info,  Node: Benchmarking,  Next: Pull Requests!,  Prev: Unit testing,  Up: Process Sockets
 
-ELISP> (defvar my-sock (ps-make-socket my-proc))
-my-sock
+1.6 Benchmarking
+================
 
-ELISP> (ps-write-string my-sock "PS1=\"\"; echo Hello world!\n")
-nil
+TODO
 
-ELISP> (ps-drain-input my-sock)
-"Hello world!\n"
+
+File: process-sockets.info,  Node: Pull Requests!,  Prev: Benchmarking,  Up: Process Sockets
 
-ELISP>
+1.7 Pull Requests!
+==================
+
+Pull requests are greatly appreciated.
 
 
 
 Tag Table:
-Node: Top104
-Node: Process Sockets226
-Ref: #process-sockets344
-Node: Pull Requests!689
-Ref: #pull-requests836
-Node: Process Sockets API876
-Ref: #process-sockets-api1062
-Node: Buffered Streams API1713
-Ref: #buffered-streams-api1894
-Node: Example2309
-Ref: #example2436
+Node: Top94
+Node: Process Sockets211
+Ref: #process-sockets324
+Node: Installation730
+Ref: #installation864
+Node: Quickstart rocket1593
+Ref: #quickstart-rocket1769
+Node: Process Sockets API2351
+Ref: #process-sockets-api2535
+Node: Buffered Streams API3186
+Ref: #buffered-streams-api3367
+Node: Unit testing3782
+Ref: #unit-testing3940
+Node: Benchmarking3946
+Ref: #benchmarking4098
+Node: Pull Requests!4104
+Ref: #pull-requests4239
 
 End Tag Table
 
