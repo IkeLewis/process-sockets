@@ -22,7 +22,7 @@ Alternatively, old school manual installation may be used.
 
   1.  In your Emacs init file:
 
-      a. Add the process-sockets directory to your load path.
+      a. Add the process-sockets directory to your load path.<br>
       b. Include a line containing (require 'procces-sockets)
 
   2. Install the doc/process-sockets.info file.  See [https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Texinfo-documentation.html](https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Texinfo-documentation.html)
