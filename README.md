@@ -6,10 +6,27 @@ it to be quite unwieldy; I often found myself wanting just a simple
 socket with buffered streams.  Now that Emacs 26 supports multiple
 threads, such sockets are easier to implement.
 
-Pull Requests!
---------------
+Installation
+------------
 
-Pull requests are greatly appreciated.
+Once the API becomes stable, a recipe will likely be added to MELPA.
+In that case, MELPA will be the preferred way to install.
+
+For now, Cask may be used to manually build a bleeding edge version of
+the package that can be locally installed by Emacs.
+
+  1. Run cask package in a terminal to build the package.
+  2. Run package-install-file from Emacs.
+
+Alternatively, old school manual installation may be used.
+
+  1.  In your Emacs init file:
+
+      a. Add the process-sockets directory to your load path.
+      b. Include a line containing (require 'procces-sockets)
+
+  2. Install the doc/process-sockets.info file.  See [https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Texinfo-documentation.html](https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Texinfo-documentation.html)
+
 
 Process Sockets API
 -------------------
