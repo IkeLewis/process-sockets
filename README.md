@@ -27,6 +27,32 @@ Alternatively, old school manual installation may be used.
 
   2. Install the doc/process-sockets.info file.  See [https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Texinfo-documentation.html](https://www.gnu.org/software/emacs/manual/html_node/efaq/Installing-Texinfo-documentation.html)
 
+Quickstart :rocket:
+----------
+
+1.  Install via MELPA (or manually).
+2.  Open up a REPL in Emacs via M-x ielm and try it out:
+
+    ```el
+    ELISP> (require 'process-sockets)
+    process-sockets
+
+    ELISP> (defvar my-proc (start-process "bash-proc1"
+                                          (get-buffer-create "bash-proc1")
+                                          "/bin/bash"))
+    my-proc
+
+    ELISP> (defvar my-sock (ps-make-socket my-proc))
+    my-sock
+
+    ELISP> (ps-write-string my-sock "PS1=\"\"; echo Hello world!\n")
+    nil
+
+    ELISP> (ps-drain-input my-sock)
+    "Hello world!\n"
+
+    ELISP>
+    ```
 
 Process Sockets API
 -------------------
