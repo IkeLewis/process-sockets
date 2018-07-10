@@ -79,6 +79,14 @@ Buffered Streams API
  bs-write                | Write a string to the stream.
  bs-drain-input          | Return all available characters from the stream's buffer as a string.
 
+Unit testing
+------------
+TODO
+
+Benchmarking
+------------
+TODO
+
 Pull Requests!
 --------------
 
