@@ -3,7 +3,7 @@
 
 (defun build-docs ()
   (with-temp-file "./process-sockets.info"
-    (insert-file-contents-literally "./process-sockets-temp.info")
+    (insert-file-contents-literally "./process-sockets.info")
     (goto-char 1)
     (set-mark (point))
     (search-forward "1 Process Sockets\n")
