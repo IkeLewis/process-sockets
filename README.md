@@ -1,10 +1,10 @@
 Process Sockets
 ===============
 
-If you've ever had to perform process I/O in Emacs, you may have found
-it to be quite unwieldy; I often found myself wanting just a simple
-socket with buffered streams.  Now that Emacs 26 supports multiple
-threads, such sockets are easier to implement.
+WARNING: this repo will be in a state of flux for a bit.
+
+provides sockets for performing process I/O in Emacs.  The socket
+implementation is based on pipes (see below).
 
 Installation
 ------------
