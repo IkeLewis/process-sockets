@@ -48,7 +48,7 @@ Quickstart :rocket:
     ELISP> (ps-write-string my-sock "PS1=\"\"; echo Hello world!\n")
     nil
 
-    ELISP> (ps-drain-input my-sock)
+    ELISP> (ps-read-all my-sock)
     "Hello world!\n"
 
     ELISP>
@@ -60,31 +60,52 @@ Process Sockets API
  Function         | Short Description
 ------------------|------------------------------------------------------
  ps-make-socket   | Make a new process socket.
- ps-close         | Close the socket.
+ ps-write         | Write a character or string to the socket.
+ ps-write-ln      | Write a line to the socket.
+ ps-write-sexp    | Write an sexp to the socket.
+ ps-read          | Read a character from the socket.
+ ps-read-ln       | Read a line from the socket.
+ ps-read-sexp     | Read an sexp from the socket.
+ ps-read-all      | Read all currently available characters into a string.
  ps-input-stream  | Return the socket's buffered input stream.
  ps-output-stream | Return the socket's buffered output stream.
- ps-read-sexp     | Read an sexp from the socket.
- ps-write-sexp    | Write an sexp to the socket.
- ps-read-char     | Read a character from the socket.
- ps-write-string  | Write a string to the socket.
- ps-drain-input   | Return all available characters from the socket's input stream as a string.
+ ps-close         | Close the socket.
 
-Buffered Streams API
---------------------
+Traditional sockets usually have a connect method.  In this
+implementation, process sockets are (currently) "connected" at the
+time they are created.
 
- Function                | Short Description
- ------------------------|------------------------------------------------
- bs-make-buffered-stream | Make a new buffered stream.
- bs-read                 | Read/unread a character from the stream.
- bs-write                | Write a string to the stream.
- bs-drain-input          | Return all available characters from the stream's buffer as a string.
+Pipe API
+--------
+
+Nearly all the functions (read, print, etc) that work with streams
+should work with a pipe's I/O streams, as well.
+
+The default buffer size is 65,536 bytes; that value was selected to
+agree with the default Linux pipe capacity and should rarely need to
+be changed.
+
+ Function           | Short Description
+ -------------------|------------------------------------------------
+ pipe-make-pipe     | Make a new pipe.
+ pipe-input-stream  | Return the pipe's input stream.
+ pipe-output-stream | Return the pipe's output stream.
+ pipe-write         | Write a character or string to the pipe.
+ pipe-write-ln      | Write a line to the pipe.
+ pipe-write-sexp    | Write an sexp to the pipe.
+ pipe-read          | Read/unread a character from the pipe.
+ pipe-read-ln       | Read a line from the pipe.
+ pipe-read-sexp     | Read an sexp from the pipe.
+ pipe-read-all      | Read all currently available characters into a string.
 
 Unit testing
 ------------
+
 TODO
 
 Benchmarking
 ------------
+
 TODO
 
 Pull Requests!
