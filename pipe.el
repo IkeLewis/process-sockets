@@ -218,5 +218,48 @@ The following table gives some examples of clockwise substrings.
 
 ;;}}}
 
+;;{{{
+;;; Public API
+
+(defun* pipe-make-pipe (&optional (buf-size pipe-default-buf-size)
+			     (underflow-handler
+			      (lambda ()
+				(error "Buffer underflow"))))
+  "Create a new pipe."
+  (let* ( ;; The environment
+	 (env `((num-writ . ,(pipe-make-var 0))
+		(write-pos . ,(pipe-make-var 0))
+		(num-read . ,(pipe-make-var buf-size))
+		(read-pos . ,(pipe-make-var 0))
+		(buf . ,(make-string buf-size 0))
+		(underflow-handler .,underflow-handler))))
+    (lambda (fn-or-var &rest args)
+      (case fn-or-var
+	((env)
+	 env)
+	(t
+	 (error "Invalid arguments"))))))
+
+;;{{{
+;;; Accessors
+
+(defun pipe-input-stream (pipe)
+  "Return the pipe's input stream.  See Ouput Streams in section
+18.2 of the ELISP reference manual."
+  (lambda (&optional unread)
+    (pipe-read pipe unread)))
+
+(defun pipe-output-stream (pipe)
+  "Return the pipe's output stream.  See Ouput Streams in section
+18.4 of the ELISP reference manual."
+  (lambda (char)
+    (pipe-write pipe char)))
+
+;;}}}
+
+;;}}}
+
+;;}}}
+
 (provide 'pipe)
 ;;; pipe.el ends here
