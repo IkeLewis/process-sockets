@@ -26,5 +26,30 @@
 ;;{{{
 ;; Code:
 
+;;; Required Libraries
+;; For 'pipe-default-newline-delim'
+(require 'pipe)
+
+;;{{{
+;;; Customization Variables
+
+(defvar list-pipe-debug nil "Whether or not to print debugging
+messages.")
+
+(defvar list-pipe-default-underflow-handler (lambda () (error "Underflow")))
+
+;;}}}
+
+;;{{{
+;;; List Pipe Functions & Macros
+
+(defun list-pipe-make-list-pipe ()
+  "Make a list-based pipe."
+  nil)
+
+;;}}}
+
+;;}}}
+
 (provide 'list-pipe)
 ;;; list-pipe.el ends here
