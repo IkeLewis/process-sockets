@@ -114,5 +114,30 @@ to the default newline string used by the OS.")
 
 ;;}}}
 
+;;{{{
+;;; First-class variables
+
+(defun pipe-make-var (val)
+  (list val))
+
+(defalias 'pipe-var-ref 'car)
+
+(defmacro pipe-set-var! (var new-val)
+  `(setf (car ,var) ,new-val))
+
+(defmacro pipe-inc-var! (var amt)
+  `(setf (car ,var) (+ (car ,var) ,amt)))
+
+(defmacro pipe-dec-var! (var amt)
+  `(setf (car ,var) (- (car ,var) ,amt)))
+
+(defmacro pipe-inc-var-mod-n! (var amt n)
+  `(setf (car ,var) (mod (+ (car ,var) ,amt) ,n)))
+
+(defmacro pipe-dec-var-mod-n! (var amt n)
+  `(setf (car ,var) (mod (- (car ,var) ,amt) ,n)))
+
+;;}}}
+
 (provide 'pipe)
 ;;; pipe.el ends here
