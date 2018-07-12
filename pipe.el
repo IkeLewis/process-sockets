@@ -202,5 +202,21 @@ The following table gives some examples of clockwise substrings.
 
 ;;}}}
 
+;;{{{
+;;; Private Macros and Functions
+
+(defmacro pipe-with-pipe (pipe &rest body)
+  "Evaluate `body' in the environment of `pipe'."
+  `(let* ((env (funcall ,pipe 'env))
+	  (num-writ (cdr (assoc 'num-writ env)))
+	  (write-pos (cdr (assoc 'write-pos env)))
+	  (num-read (cdr (assoc 'num-read env)))
+	  (read-pos (cdr (assoc 'read-pos env)))
+	  (buf (cdr (assoc 'buf env)))
+	  (underflow-handler (cdr (assoc 'underflow-handler env))))
+     ,@body))
+
+;;}}}
+
 (provide 'pipe)
 ;;; pipe.el ends here
