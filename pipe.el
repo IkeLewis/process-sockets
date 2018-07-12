@@ -257,6 +257,54 @@ The following table gives some examples of clockwise substrings.
 
 ;;}}}
 
+;;{{{
+;;; Peeking Functions
+
+(defun pipe-peek (pipe)
+  "Return the next character to be read from pipe, but don't
+modify the pipe."
+  (let ((char (pipe-read! pipe)))
+    ;; Unread char from pipe
+    (pipe-read! pipe char)
+    char))
+
+(defun pipe-peek-ln (pipe)
+  "Return the next line to be read from pipe, but don't modify
+  the pipe."
+  (let ((line (pipe-read-ln! pipe)))
+    (dolist (char (reverse line))
+      ;; unread the character
+      (pipe-read! pipe char))))
+
+(defun pipe-peek-sexp (pipe)
+  "Return the next sexp to be read from pipe, but don't modify
+  the pipe."
+  (let ((sexp (pipe-read-sexp! pipe)))
+    (dolist (char (reverse sexp))
+      ;; unread the character
+      (pipe-read! pipe char))))
+
+(defun pipe-peek-all (pipe)
+  "Return a string containing all of the pipe's currently
+  available input, but don't modify the pipe."
+  (pipe-with-pipe
+   pipe
+   (let* ((buf-size (length buf))
+	  ;; after-last-pos -- the position just after the last
+	  ;; character to be read
+	  (after-last-pos (mod (+ (pipe-var-ref read-pos)
+				  (pipe-var-ref num-writ))
+			       buf-size)))
+     (if (> (pipe-var-ref num-writ) 0)
+	 ;; The pipe's available input can only be modeled as a
+	 ;; clockwise substring when the buffer is non-empty.
+	 (pipe-clockwise-substring buf
+				   (pipe-var-ref read-pos)
+				   after-last-pos)
+       ""))))
+
+;;}}}
+
 ;;}}}
 
 ;;}}}
