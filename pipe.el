@@ -305,6 +305,81 @@ modify the pipe."
 
 ;;}}}
 
+;;{{{
+;;; Reading Functions
+
+(defun pipe-read! (pipe &optional unread)
+  "Reads a character from `pipe' if `unread' is nil.
+Otherwise it unreads the character `unread' from `pipe'."
+  ;; This function must support two kinds of calls:
+  ;;
+  ;; • When it is called with no arguments, it should return the next
+  ;;   character.
+  ;;
+  ;; • When it is called with one argument (always a character), it
+  ;;   should save the argument and arrange to return the argument on
+  ;;   the next call.  This is called “unreading” the character; it
+  ;;   happens when the Lisp reader reads one character too many and
+  ;;   wants to put it back where it came from.  In this case, it
+  ;;   makes no difference what value is returned.
+  (pipe-with-pipe
+   pipe
+   (let ((buf-size (length buf)))
+     (cond (unread (pipe-debug "unreading %s" unread)
+		   (if (= (pipe-var-ref num-writ) buf-size)
+		       (progn (error "Buffer overflow (unread)"))
+		     (prog1 unread (pipe-inc-var! num-read  -1)
+			    (pipe-inc-var! num-writ 1)
+			    ;; unreading does not alter write-pos
+			    (pipe-dec-var-mod-n! read-pos 1 buf-size))))
+	   ((= (pipe-var-ref num-read) buf-size)
+	    (pipe-debug "handling undeflow")
+	    (pipe-debug "got input %s" (funcall underflow-handler))
+	    (pipe-read pipe))
+	   (t (let ((res (prog1 (aref buf (pipe-var-ref read-pos))
+			   (pipe-inc-var! num-read  1)
+			   (pipe-inc-var! num-writ -1)
+			   ;; reading does not alter write-pos
+			   (pipe-inc-var-mod-n! read-pos 1 buf-size))))
+		(pipe-debug "read %c" res)
+		res))))))
+
+(defun pipe-read-ln! (pipe)
+  "Read a line from `pipe'."
+  (let ((chars '()))
+    (while (not (funcall (lambda (chars)
+			   (string-suffix-p pipe-default-newline-delim
+					    (concat chars)))
+			 (setq chars (append chars (list (pipe-read! pipe)))))))
+    (concat chars)))
+
+(defun pipe-read-sexp! (pipe)
+  "Read an sexp from `pipe'."
+  (read (lambda (&optional unread)
+	  (pipe-read! pipe unread))))
+
+(defun pipe-read-all! (pipe)
+  "Reads all currently available characters from `pipe' into a
+string."
+  (pipe-with-pipe
+   pipe
+   (let* ((buf-size (length buf))
+	  (after-last-pos (mod (+ (pipe-var-ref read-pos)
+				  (pipe-var-ref num-writ))
+			       buf-size)))
+     ;; after-last-pos -- the position just after the last
+     ;; character to be read
+     (prog1
+	 (if (< after-last-pos (pipe-var-ref read-pos))
+	     (concat (substring-no-properties buf (pipe-var-ref read-pos))
+		     (substring-no-properties buf 0 after-last-pos))
+	   (substring-no-properties buf (pipe-var-ref read-pos) after-last-pos))
+       (pipe-inc-var-mod-n! read-pos (pipe-var-ref num-writ) buf-size)
+       (pipe-set-var! num-read buf-size)
+       ;; reading does not alter the write position
+       (pipe-set-var! num-writ 0)))))
+;;}}}
+
 ;;}}}
 
 ;;}}}
