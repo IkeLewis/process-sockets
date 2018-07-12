@@ -98,5 +98,21 @@
 ;;{{{
 ;;; Code:
 
+;; For 'defun*'
+(require 'cl)
+
+;;{{{
+;;; Customizable Variables
+
+(defvar pipe-debug nil "Set to true to log debugging info in the
+*Messages* buffer.")
+
+(defvar pipe-default-buf-size 65536 "The default buffer size for pipes.")
+
+(defvar pipe-default-newline-delim "\n" "This should usually be set
+to the default newline string used by the OS.")
+
+;;}}}
+
 (provide 'pipe)
 ;;; pipe.el ends here
