@@ -139,5 +139,59 @@ to the default newline string used by the OS.")
 
 ;;}}}
 
+;;{{{
+;;; Utility functions
+
+(defun pipe-memcpy! (src dest dest-offset)
+  "Copy `src' to `dest' starting at offset `dest-offset'; if the
+length of `src' plus `dest-offset' is greater than the length of
+`dest', then the writing wraps.  If `src' is longer then `dest'
+then a buffer overflow error is thrown.  If `dest-offset' is out
+of range, then an invalid offset error is thrown."
+  (unless (<= (length src) (length dest))
+    (error "Buffer overflow"))
+  (unless (< dest-offset (length dest))
+    (error "Invalid offset '%s'" dest-offset))
+
+  (if (<= (+ dest-offset (length src)) (length dest))
+      (store-substring dest dest-offset src)
+    (progn (store-substring dest dest-offset (substring src 0 (- (length dest)
+								 dest-offset)))
+	   (store-substring dest 0 (substring src (- (length dest)
+						     dest-offset))))))
+
+(defun pipe-clockwise-substring (str start end)
+  "Return the clockwise-substring of a non-empty string `str'
+that starts at `start' and ends at `end'.  Imagine that the
+characters of `str' are positioned around a 0-based clock with
+n-1 numbers, where n is the length of `str'.  For example,
+suppose `str' is 'abcd'.  Then the characters of `str' may be
+positioned around a 0-based clock with 4 numbers as shown below.
+
+       _a_
+      / 0 \
+    d|3   1|b
+     \\_2_/
+        c
+
+The following table gives some examples of clockwise substrings.
+
+| start | end | clockwise-substring |
+| 1     | 3   | 'bc'                |
+| 3     | 1   | 'da'                |
+| 1     | 1   | 'bcda'              |
+| 3     | 3   | 'dabc'              |
+"
+  (when (string-empty-p str)
+    (error "str must not be empty"))
+
+  (cond ((>= start end)
+	 (concat (substring str start)
+		 (substring str 0 end)))
+	(t
+	 (substring str start end))))
+
+;;}}}
+
 (provide 'pipe)
 ;;; pipe.el ends here
