@@ -193,5 +193,14 @@ The following table gives some examples of clockwise substrings.
 
 ;;}}}
 
+;;{{{
+;;; Debugging/logging functions
+
+(defun pipe-debug (fmt-str &rest args)
+  (when pipe-debug
+    (apply 'message (concat "pipe-debug: " fmt-str "\n") args)))
+
+;;}}}
+
 (provide 'pipe)
 ;;; pipe.el ends here
