@@ -380,6 +380,38 @@ string."
        (pipe-set-var! num-writ 0)))))
 ;;}}}
 
+;;{{{
+;;; Writing Functions
+
+(defun pipe-write! (pipe char-or-str)
+  "Writes the `char-or-str' to `pipe'."
+  (let ((str (if (characterp char-or-str)
+		 (char-to-string char-or-str)
+	       char-or-str)))
+   (pipe-with-pipe
+    pipe
+    (let ((buf-size (length buf)))
+      (cond ((> (+ (pipe-var-ref num-writ) (length str)) buf-size)
+	     (error "Buffer overflow"))
+	    (t
+	     (pipe-debug "wrote '%s'" str)
+	     (prog1 (pipe-memcpy! str buf (pipe-var-ref write-pos))
+	       (pipe-inc-var! num-writ (length str))
+	       (pipe-dec-var! num-read (length str))
+	       ;; writing does not alter the read position
+	       (pipe-inc-var-mod-n! write-pos (length str) buf-size))))))))
+
+(defun pipe-write-ln! (pipe &optional string)
+  "Write `string' followed by a new line delimiter to `pipe'."
+  (pipe-write! pipe (concat (or string "") pipe-default-newline-delim)))
+
+(defun pipe-write-sexp! (pipe sexp)
+  "Write `string' followed by a new line delimiter to `pipe'."
+  (prin1 sexp (lambda (c) (pipe-write! pipe c)))
+  (pipe-write! pipe " "))
+
+;;}}}
+
 ;;}}}
 
 ;;}}}
