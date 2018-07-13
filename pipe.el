@@ -26,7 +26,7 @@
 ;; -----------
 ;;
 ;; An (Emacs) pipe is a buffer together with several operations
-;; (pipe-read, pipe-write, etc) and has the following properties:
+;; (pipe-read!, pipe-write!, etc) and has the following properties:
 ;;
 ;;     buf_size: the size of the pipe's buffer
 ;;
@@ -247,13 +247,13 @@ The following table gives some examples of clockwise substrings.
   "Return the pipe's input stream.  See Ouput Streams in section
 18.2 of the ELISP reference manual."
   (lambda (&optional unread)
-    (pipe-read pipe unread)))
+    (pipe-read! pipe unread)))
 
 (defun pipe-output-stream (pipe)
   "Return the pipe's output stream.  See Ouput Streams in section
 18.4 of the ELISP reference manual."
   (lambda (char)
-    (pipe-write pipe char)))
+    (pipe-write! pipe char)))
 
 ;;}}}
 
@@ -335,7 +335,7 @@ Otherwise it unreads the character `unread' from `pipe'."
 	   ((= (pipe-var-ref num-read) buf-size)
 	    (pipe-debug "handling undeflow")
 	    (pipe-debug "got input %s" (funcall underflow-handler))
-	    (pipe-read pipe))
+	    (pipe-read! pipe))
 	   (t (let ((res (prog1 (aref buf (pipe-var-ref read-pos))
 			   (pipe-inc-var! num-read  1)
 			   (pipe-inc-var! num-writ -1)
