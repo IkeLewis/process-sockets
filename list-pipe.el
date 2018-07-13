@@ -47,6 +47,37 @@ messages.")
   "Make a list-based pipe."
   nil)
 
+;;{{{
+;;; Peeking Functions
+
+(defun list-pipe-peek (list-pipe)
+  "Return the next character to be read from pipe, but don't
+modify the pipe."
+  (car list-pipe))
+
+(defun list-pipe-ln (list-pipe)
+  "Return the next line to be read from pipe, but don't modify the
+  pipe."
+  (let ((line (list-pipe-read-ln! list-pipe)))
+    (dolist (char (reverse line))
+      ;; unread the character
+      (list-pipe-read! list-pipe char))))
+
+(defun list-pipe-sexp (list-pipe)
+  "Return the next sexp to be read from pipe, but don't modify
+  the pipe."
+  (let ((sexp (list-pipe-read-sexp! list-pipe)))
+    (dolist (char (reverse sexp))
+      ;; unread the character
+      (list-pipe-read! list-pipe char))))
+
+(defun list-pipe-peek-all (list-pipe)
+  "Return a string containing all of `list-pipe's currently
+  available input, but don't modify `list-pipe'."
+  (concat list-pipe))
+
+;;}}}
+
 ;;}}}
 
 ;;}}}
