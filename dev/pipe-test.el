@@ -36,5 +36,15 @@
 ;; For 'list-pipe-make-pipe'
 (require 'list-pipe)
 
+;;; Customization Variables
+
+(defvar pt-debug nil "Whether or not to print debugging messages.")
+
+;;; Utility Functions
+
+(defun pt-next-n-values (data-src-fn n)
+  "Return a list of the next n values returned by `data-src-fn'."
+  (mapcar (lambda (x) (funcall data-src-fn 1)) (number-sequence 1 n)))
+
 (provide 'pipe-test)
 ;; pipe-test.el ends here
