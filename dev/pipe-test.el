@@ -82,5 +82,69 @@ characters."
   (unless (and (<= 0 y) (<= y buf-size))
     (error "Second coordinate %s is not between 0 and %s" y buf-size)))
 
+;;; Transformation Functions and Macros
+
+(defun pt-pipe-transformation (from to buf-size data-src-fn)
+  "Return a list of elementary transformations that will
+ transform a pipe in state `from' to a pipe in state `to', where
+ `data-src-fn' is called whenever data for a write operation is
+ needed.  The function `data-src-fn' should have exactly one
+ parameter `num' that specifies the length of the string to be
+ returned."
+  (cl-destructuring-bind (a b) from
+    (cl-destructuring-bind (c d) to
+      (pt-pipe-state-p a b buf-size)
+      (pt-pipe-state-p c d buf-size)
+      (let ((k (abs (- d b))))
+	(if (< b d)
+	    ;; Perform k writes
+	    (list (cons 'w (cons k (pt-next-n-values data-src-fn k)))
+		  ;; Perform k2 read-writes or write-reads
+		  (let ((k2 (mod (- c a) buf-size)))
+		    (cons (if (> d 0) 'rw 'wr)
+			  (cons k2 (pt-next-n-values data-src-fn k2)))))
+	  ;; Perform k reads
+	  (list (list 'r k)
+		;; Perform k2 read-writes or write-reads
+		(let ((k2 (mod (- c (+ a k)) buf-size)))
+		  (cons (if (> d 0) 'rw 'wr)
+			(cons k2 (pt-next-n-values data-src-fn k2))))))))))
+
+(defun pt-pipe-transform (pipe trans)
+  "Apply each transformation in `trans' to `pipe'."
+  (dolist (tran trans)
+    (cond ((eq (car tran) 'rw)
+	   (dolist (char (cddr tran))
+	     (pipe-read! pipe)
+	     (pipe-write! pipe char)))
+	  ((eq (car tran) 'wr)
+	   (dolist (char (cddr tran))
+	     (pipe-write! pipe char)
+	     (pipe-read! pipe)))
+	  ((eq (car tran) 'r)
+	   (dotimes (i (cadr tran))
+	     (pipe-read! pipe)))
+	  ((eq (car tran) 'w)
+	   (dolist (char (cddr tran))
+	     (pipe-write! pipe char))))))
+
+(defmacro pt-list-pipe-transform (list-pipe trans)
+  "Apply each transformation in `trans' to `list-pipe'."
+  `(dolist (_tran ,trans)
+     (cond ((eq (car _tran) 'rw)
+	    (dolist (_char (cddr _tran))
+	      (list-pipe-read! ,list-pipe)
+	      (list-pipe-write! ,list-pipe _char)))
+	   ((eq (car _tran) 'wr)
+	    (dolist (_char (cddr _tran))
+	      (list-pipe-write! ,list-pipe _char)
+	      (list-pipe-read! ,list-pipe)))
+	   ((eq (car _tran) 'r)
+	    (dotimes (i (cadr _tran))
+	      (list-pipe-read! ,list-pipe)))
+	   ((eq (car _tran) 'w)
+	    (dolist (_char (cddr _tran))
+	      (list-pipe-write! ,list-pipe _char))))))
+
 (provide 'pipe-test)
 ;; pipe-test.el ends here
