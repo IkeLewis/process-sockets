@@ -106,9 +106,19 @@
 (defun ps-set-auto-flush! (ps val)
   (funcall ps 'set-auto-flush! val))
 
+;;; Reading Functions
 
+(defun ps-read! (ps)
+  (pipe-read! (funcall ps 'input-pipe)))
 
+(defun ps-read-ln! (ps)
+  (pipe-read-ln! (funcall ps 'input-pipe)))
 
+(defun ps-read-all! (ps)
+  (pipe-read-all! (funcall ps 'input-pipe)))
+
+(defun ps-read-sexp! (ps)
+  (pipe-read-sexp! (funcall ps 'input-pipe)))
 
 
 (provide 'process-sockets)
