@@ -280,5 +280,41 @@ pt-validate-pipe macros."
       (should (equal sexp
 		     (list-pipe-read-sexp! list-pipe))))))
 
+;;; ERT Tests
+
+(ert-deftest ert-test-pipe-make-pipe ()
+  (let ((pipe (pipe-make-pipe)))
+    (pipe-with-pipe pipe
+		    (should (equal (pipe-var-ref num-writ) 0))
+		    (should (equal (pipe-var-ref write-pos) 0))
+		    (should (equal (pipe-var-ref num-read) pipe-default-buf-size))
+		    (should (equal (pipe-var-ref read-pos) 0))
+		    (should (equal (length buf) pipe-default-buf-size))
+		    (should-error (funcall 'underflow-handler)
+				  :type 'error))))
+
+(ert-deftest ert-test-pipes-write-read-small-buf-size ()
+  ;; create a buffer of size 2^n
+  (let ((n 8))
+    (dolist (buf-size (mapcar (lambda (n) (expt 2 n)) (number-sequence 0 n)))
+      (pt-validate-pipe buf-size 'pt-pseudo-random-ascii-string)
+      (pt-pseudo-randomly-validate-pipe buf-size
+					'pt-pseudo-random-ascii-string
+					10))))
+
+(ert-deftest ert-test-pipes-write-read-default-buf-size ()
+  (pt-pseudo-randomly-validate-pipe pipe-default-buf-size
+				    'pt-pseudo-random-ascii-string
+				    1))
+
+(ert-deftest ert-test-pipes-write-ln-read-ln ()
+  (pt-pipes-write-ln-read-ln))
+
+(ert-deftest ert-test-pipes-write-read-all ()
+  (pt-pipes-write-read-all))
+
+(ert-deftest ert-test-pipes-write-sexp-read-sexp ()
+  (pt-pipes-write-sexp-read-sexp))
+
 (provide 'pipe-test)
 ;; pipe-test.el ends here
