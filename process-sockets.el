@@ -120,6 +120,27 @@
 (defun ps-read-sexp! (ps)
   (pipe-read-sexp! (funcall ps 'input-pipe)))
 
+;;; Writing Functions
+
+(defun ps-write! (ps char-or-str)
+  (pipe-write! (funcall ps 'output-pipe) char-or-str)
+  (when (ps-auto-flush ps)
+    (ps-flush! ps)))
+
+(defun ps-write-ln! (ps &optional char-or-str)
+  (pipe-write-ln! (funcall ps 'output-pipe) char-or-str)
+  (when (ps-auto-flush ps)
+    (ps-flush! ps)))
+
+(defun ps-write-sexp! (ps sexp)
+  (pipe-write-sexp! (funcall ps 'output-pipe) sexp)
+  (when (ps-auto-flush ps)
+    (ps-flush! ps)))
+
+(defun ps-flush! (ps)
+  (process-send-string (funcall ps 'process)
+		       (pipe-read-all! (funcall ps 'output-pipe))))
+
 
 (provide 'process-sockets)
 ;;; process-sockets.el ends here
