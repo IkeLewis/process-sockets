@@ -1,8 +1,6 @@
 Process Sockets
 ===============
 
-WARNING: this repo will be in a state of flux for a bit.
-
 provides sockets for performing process I/O in Emacs.  The socket
 implementation is based on pipes (see below).
 
