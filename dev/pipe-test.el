@@ -25,5 +25,16 @@
 
 ;;; Code:
 
+;;; Required Libraries
+
+;; For '-take'
+(require 'dash)
+;; For 'should'
+(require 'ert)
+;; For 'pipe-make-pipe'
+(require 'pipe)
+;; For 'list-pipe-make-pipe'
+(require 'list-pipe)
+
 (provide 'pipe-test)
 ;; pipe-test.el ends here
