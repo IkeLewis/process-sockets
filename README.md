@@ -90,13 +90,13 @@ be changed.
  pipe-make-pipe     | Make a new pipe.
  pipe-input-stream  | Return the pipe's input stream.
  pipe-output-stream | Return the pipe's output stream.
- pipe-write         | Write a character or string to the pipe.
- pipe-write-ln      | Write a line to the pipe.
- pipe-write-sexp    | Write an sexp to the pipe.
- pipe-read          | Read/unread a character from the pipe.
- pipe-read-ln       | Read a line from the pipe.
- pipe-read-sexp     | Read an sexp from the pipe.
- pipe-read-all      | Read all currently available characters into a string.
+ pipe-write!        | Write a character or string to the pipe.
+ pipe-write-ln!     | Write a line to the pipe.
+ pipe-write-sexp!   | Write an sexp to the pipe.
+ pipe-read!         | Read/unread a character from the pipe.
+ pipe-read-ln!      | Read a line from the pipe.
+ pipe-read-sexp!    | Read an sexp from the pipe.
+ pipe-read-all!     | Read all currently available characters into a string.
 
 Unit testing
 ------------
