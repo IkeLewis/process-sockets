@@ -127,6 +127,33 @@ modify the pipe."
 
 ;;}}}
 
+;;{{{
+;;; Writing Macros
+
+(defmacro list-pipe-write! (list-pipe str-or-char)
+  "Write a character to `list-pipe'."
+  `(progn
+     (unless (listp ,list-pipe)
+       (error "list-pipe must be a list-pipe"))
+     (cond ((characterp ,str-or-char)
+	    (setf ,list-pipe (append ,list-pipe ,str-or-char)))
+	   ((stringp ,str-or-char)
+	    (setf ,list-pipe (append ,list-pipe (string-to-list ,str-or-char))))
+	   (t
+	    (error "str-or-char must be a string or character")))))
+
+(defmacro list-pipe-write-ln! (list-pipe &optional str-or-char)
+  "Write `string' followed by a new line delimiter to `pipe'."
+  `(list-pipe-write! ,list-pipe (concat ,(or str-or-char "")
+					pipe-default-newline-delim)))
+
+(defmacro list-pipe-write-sexp! (list-pipe sexp)
+  "Write `string' followed by a new line delimiter to `pipe'."
+  `(progn (list-pipe-write! ,list-pipe (prin1-to-string ,sexp))
+	  (list-pipe-write! ,list-pipe " ")))
+
+;;}}}
+
 ;;}}}
 
 ;;}}}
