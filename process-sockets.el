@@ -101,7 +101,10 @@
 (defun ps-auto-flush (ps)
   (funcall ps 'auto-flush))
 
+;;; Mutators
 
+(defun ps-set-auto-flush! (ps val)
+  (funcall ps 'set-auto-flush! val))
 
 
 
