@@ -38,82 +38,55 @@
 
 ;;; API Functions
 
-;; TODO: simplify this
-(defun* ps-make-socket (process &optional (ps-stream-buf-size ps-stream-buf-size))
+;;; Constructor(s)
+
+(defun* ps-make-process-socket (process &optional (pipe-buf-size pipe-default-buf-size))
   "Creates a socket for communicating with `process'."
   (unless (>= emacs-major-version 26)
     (error "Emacs 26+ is required"))
-  (let* ((proc process)
+  (let* ((process process)
 	 (sock-mutex (make-mutex))
 	 (sock-output-ready nil)
 	 (sock-cv-output-ready (make-condition-variable sock-mutex "sock-cv-output-ready"))
 	 (cv-output-ready (make-condition-variable sock-mutex "cv-output-socket"))
-	 ;; this socket's buffered input stream
-	 (bis (bs-make-buffered-stream
-	       ps-stream-buf-size
-	       (lambda ()
-		 (if (equal (current-thread)
-			    (process-thread proc))
-		     (catch 'done
-		       (while t
-			 (with-mutex sock-mutex
-				     (when sock-output-ready
-				       (setq sock-output-ready nil)
-				       (throw 'done t)))
-			 (sleep-for 0 1)))
-		   (with-mutex sock-mutex
-			       (while (not sock-output-ready)
-				 (condition-wait sock-cv-output-ready))
-			       (setq sock-output-ready nil))))))
-	 (close (lambda ()
-		  (delete-process proc)))
-	 ;; wrap the buffered input stream
-	 (input-stream (lambda (&optional unread)
-			 (bs-read bis unread)))
-	 ;; use process-send-string for the socket's output stream
-	 (output-stream (lambda (string)
-			  (process-send-string proc string)))
-	 (read-sexp (lambda ()
-		      (read input-stream)))
-	 (write-sexp (lambda (sexp)
-		       (funcall output-stream (format "%s\n" sexp))))
-	 (read-char (lambda ()
-		      (funcall input-stream)))
-	 (write-string (lambda (str)
-			 (funcall output-stream str)))
-	 (drain-input (lambda ()
-			(bs-drain-input bis))))
-    ;; Write output from the process to the socket's input
-    ;; stream.
-    (set-process-filter proc (lambda (proc string)
-			       (with-mutex sock-mutex
-					   (bs-write bis string)
-					   (setq sock-output-ready t)
-					   (condition-notify sock-cv-output-ready t))))
+	 (input-pipe (pipe-make-pipe
+		      pipe-buf-size
+		      (lambda ()
+			(if (equal (current-thread)
+				   (process-thread process))
+			    (catch 'done
+			      (while t
+				(with-mutex sock-mutex
+				  (when sock-output-ready
+				    (setq sock-output-ready nil)
+				    (throw 'done t)))
+				(sleep-for 0 1)))
+			  (with-mutex sock-mutex
+			    (while (not sock-output-ready)
+			      (condition-wait sock-cv-output-ready))
+			    (setq sock-output-ready nil))))))
+	 (output-pipe (pipe-make-pipe pipe-buf-size))
+	 (auto-flush nil))
+    ;; Write output from the process to the socket's input stream.
+    (set-process-filter process (lambda (process string)
+				  (with-mutex sock-mutex
+				    (pipe-write! input-pipe string)
+				    (setq sock-output-ready t)
+				    (condition-notify sock-cv-output-ready t))))
     (lambda (fn-or-var &rest args)
       (case fn-or-var
-	;; Debugging
-	((bis)
-	 bis)
-	;; Public functions
-	((input-stream)
-	 input-stream)
-	((output-stream)
-	 output-stream)
-	((read)
-	 ;; Read a sexp
-	 (apply read-sexp args))
-	((write)
-	 ;; Write a sexp
-	 (apply write-sexp args))
-	((read-char)
-	 (apply read-char args))
-	((write-string)
-	 (apply write-string args))
-	((drain-input)
-	 (apply drain-input args))
-	((close)
-	 (apply close args))
+	;; Accessors
+	((process)
+	 process)
+	((input-pipe)
+	 input-pipe)
+	((output-pipe)
+	 output-pipe)
+	((auto-flush)
+	 auto-flush)
+	;; Mutators
+	((set-auto-flush!)
+	 (setf auto-flush (car args)))
 	(t
 	 (error "Invalid arguments"))))))
 
