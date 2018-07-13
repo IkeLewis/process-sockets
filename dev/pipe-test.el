@@ -316,5 +316,48 @@ pt-validate-pipe macros."
 (ert-deftest ert-test-pipes-write-sexp-read-sexp ()
   (pt-pipes-write-sexp-read-sexp))
 
+;;; Rough Benchmarks
+
+(defun* pt-benchmark-pipe (&optional (chunk-size pipe-default-buf-size)
+				     (chunk-count 1024))
+  "Transfer (write and then read) `chunk-size' bytes to a pipe
+`chunk-count' times, and then display the pipe's average transfer
+rate."
+  (let ((pipe (pipe-make-pipe)))
+    (print (format "Transfer rate: %s MB/sec"
+		   (/
+		    ;; MB
+		    (/ (* chunk-count chunk-size)
+		       (+ (expt 2 20) 0.0))
+		    ;; seconds
+		    (car (benchmark-run
+			     (dotimes (i chunk-count)
+			       (pipe-write! pipe
+					   (make-string chunk-size ?a))
+			       (pipe-read-all! pipe)))))))
+    nil))
+
+
+(defun* pt-benchmark-list-pipe (&optional (chunk-size pipe-default-buf-size)
+					  (chunk-count 1024))
+  "Transfer (write and then read) `chunk-size' bytes to a list
+pipe `chunk-count' times, and then display the list pipe's
+average transfer rate."
+  (let ((pipe (list-pipe-make-list-pipe)))
+    (print (format "Transfer rate: %s MB/sec"
+		   (/
+		    ;; MB
+		    (/ (* chunk-count chunk-size)
+		       (+ (expt 2 20) 0.0))
+		    ;; seconds
+		    (car (benchmark-run
+			     (dotimes (i chunk-count)
+			       (list-pipe-write! pipe
+						   (make-string chunk-size ?a))
+			       (list-pipe-read-all! pipe)))))))
+    nil))
+
+
+
 (provide 'pipe-test)
 ;; pipe-test.el ends here
