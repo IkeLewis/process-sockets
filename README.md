@@ -40,13 +40,15 @@ Quickstart :rocket:
                                           "/bin/bash"))
     my-proc
 
-    ELISP> (defvar my-sock (ps-make-socket my-proc))
+    ELISP> (defvar my-sock (ps-make-process-socket my-proc))
     my-sock
 
-    ELISP> (ps-write-string my-sock "PS1=\"\"; echo Hello world!\n")
+    ELISP> (ps-write! my-sock "PS1=\"\"; echo Hello world!\n")
     nil
 
-    ELISP> (ps-read-all my-sock)
+    ELISP> (ps-flush! my-sock)
+
+    ELISP> (ps-read-all! my-sock)
     "Hello world!\n"
 
     ELISP>
