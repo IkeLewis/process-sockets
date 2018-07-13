@@ -101,7 +101,13 @@ be changed.
 Unit testing
 ------------
 
-TODO
+Since nearly all of the socket functions depend on pipe functions,
+most of the unit testing effort was devoted to testing pipes.
+Currently all pipes are buffer-based, so list-based pipes were used as
+a basis for comparison.  For small buffer sizes (<= 1024 bytes), all
+possible values of read-pos and num-writ were traversed.  For large
+buffer sizes (e.g. 65536 bytes), a pseudo-randomly selected subset of
+values were traversed.
 
 Benchmarking
 ------------
