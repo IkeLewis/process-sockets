@@ -141,6 +141,11 @@
   (process-send-string (funcall ps 'process)
 		       (pipe-read-all! (funcall ps 'output-pipe))))
 
+;;; Misc Functions
+
+(defun ps-close! (ps)
+  (ps-flush! ps)
+  (delete-process (funcall ps 'process)))
 
 (provide 'process-sockets)
 ;;; process-sockets.el ends here
