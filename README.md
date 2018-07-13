@@ -112,7 +112,19 @@ values were traversed.
 Benchmarking
 ------------
 
-TODO
+The average transfer rate for the buffer-based pipe implementation is
+around 18.7MB/sec on my workstation for large transfers (with a large
+chunk size).
+
+In contrast, the list-based pipe implementation had rather poor
+performance (at around 4.8MB/sec) on large sustained transfers due to
+the fact that extensive consing rapidly triggers garbage collections.
+
+Surprisingly, the list-based pipe implementation had better
+performance for small transfers, which was likely due to primarily two
+factors: (1) the current buffer-based implementation performs a
+considerable amount of heap-based string allocation, and (2) the
+efficiency of the list implementation in EMACS.
 
 Pull Requests!
 --------------
