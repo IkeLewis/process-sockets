@@ -46,5 +46,25 @@
   "Return a list of the next n values returned by `data-src-fn'."
   (mapcar (lambda (x) (funcall data-src-fn 1)) (number-sequence 1 n)))
 
+;;; String Generators
+
+(defun pt-pseudo-random-ascii-string (n)
+  "Return a pseudo-randomly generated ASCII string."
+  (concat (mapcar (lambda (x) (random 128)) (number-sequence 1 n))))
+
+(defun pt-pseudo-random-ascii-string-visible (n)
+  "Return a pseudo-randomly generated ASCII string of visible
+characters."
+  (concat (mapcar (lambda (x)
+		    (let ((char))
+		      (while (or (not char) (< char 33) (= char 127))
+			(setf char (random 128)))
+		      char))
+		  (number-sequence 1 n))))
+
+(defun pt-null-string (n)
+  "Return a string of length n containing only null bytes."
+  (make-string n 0))
+
 (provide 'pipe-test)
 ;; pipe-test.el ends here
