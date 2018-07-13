@@ -146,5 +146,139 @@ characters."
 	    (dolist (_char (cddr _tran))
 	      (list-pipe-write! ,list-pipe _char))))))
 
+;;; Validation Macros
+
+(defmacro pt-validate-pipes-core (_prev _pipe _list-pipe _next _tran)
+  "Common/core functionality shared between the following
+pt-validate-pipe macros."
+  `(progn
+     ;; Log the previous (current state), the next state, and the
+     ;; transformation to be applied
+     (when pt-debug
+       (print (format "pipe: %s; list-pipe: %s"
+		      (pt-pipe-state ,_pipe)
+		      (list-pipe-peek-all ,_list-pipe)))
+       (print (format "%s -> %s: %s" ,_prev ,_next ,_tran)))
+
+
+     ;; Transform the pipes
+     (should (equal (-take 2 (pt-pipe-state ,_pipe)) ,_prev))
+     (pt-pipe-transform ,_pipe ,_tran)
+     (should (equal (-take 2 (pt-pipe-state ,_pipe)) ,_next))
+     (pt-list-pipe-transform ,_list-pipe ,_tran)
+
+     (when pt-debug
+       (print (format "pipe: %s; list-pipe: %s"
+		      (pt-pipe-state ,_pipe)
+		      (list-pipe-peek-all ,_list-pipe))))
+
+     ;; Check that both pipes have the same content
+     (should (equal (pipe-peek-all ,_pipe)
+		    (list-pipe-peek-all ,_list-pipe)))))
+
+(defmacro pt-validate-pipes (buf-size data-src-fn &rest body)
+  "For a pipe with a buffer size of `buf-size' and `data-src-fn'
+  validate `pipe-fn' against a list-based implementation of a
+  pipe.  For each possible value of read-pos and num-writ, the
+  pipe will assume at least one state of the form (read-pos,
+  num-writ, buf)."
+  `(let ((_prev (list 0 0))
+	 (_pipe (pipe-make-pipe ,buf-size))
+	 (_list-pipe (list-pipe-make-list-pipe)))
+     (dotimes (_read-pos2 ,buf-size)
+       (dotimes (_num-write2 (+ ,buf-size 1))
+	 (let* ((_next (list _read-pos2 _num-write2))
+		(_tran (pt-pipe-transformation _prev
+					       _next
+					       ,buf-size
+					       ,data-src-fn)))
+
+	   (pt-validate-pipe-core _prev _pipe _list-pipe _next _tran)
+
+	   ,@body
+
+	   (setq _prev _next))))))
+
+
+(defmacro pt-pseudo-randomly-validate-pipes
+    (buf-size data-src-fn max-times &rest body)
+  "For a pipe with a buffer size of `buf-size' and `data-src-fn'
+  validate `pipe-fn' against a list-based implementation of a
+  pipe.  Transitions between different pipe states occur pseudo
+  randomly."
+  `(let ((_curr (list 0 0))
+	 (_pipe (pipe-make-pipe ,buf-size))
+	 (_list-pipe (list-pipe-make-list-pipe)))
+     (dotimes (_i ,max-times)
+       (let* ((_next (list (random ,buf-size) (random (+ ,buf-size 1))))
+	      (_tran (pt-pipe-transformation _curr
+					     _next
+					     ,buf-size
+					     ,data-src-fn)))
+
+	 (pt-validate-pipe-core _curr _pipe _list-pipe _next _tran)
+
+	 ,@body
+
+	 (setq _curr _next)))))
+
+(defun pt-pipes-write-read ()
+  (pt-validate-pipe 1024 'pt-pseudo-random-ascii-string-visible))
+
+(defun pt-pipes-write-ln-read-ln ()
+  (let* ((pipe (pipe-make-pipe))
+	 (list-pipe (list-pipe-make-list-pipe))
+	 (string-length 1023)
+	 (num-strings 10)
+	 (strings (pt-next-n-values
+		   (lambda (i)
+		     (apply 'concat (pt-next-n-values
+				     'pt-pseudo-random-ascii-string-visible
+				     string-length)))
+		   num-strings)))
+    (dolist (str strings)
+      (pipe-write-ln! pipe str)
+      (list-pipe-write-ln! list-pipe str))
+    (dolist (str strings)
+      (should (equal (concat str pipe-default-newline-delim)
+		     (pipe-read-ln! pipe)))
+      (should (equal (concat str pipe-default-newline-delim)
+		     (list-pipe-read-ln! list-pipe))))))
+
+(defun pt-pipes-write-read-all ()
+  (let* ((pipe (pipe-make-pipe))
+	 (list-pipe (list-pipe-make-list-pipe))
+	 (string-length 1023)
+	 (num-strings 10)
+	 (strings (pt-next-n-values
+		   (lambda (i)
+		     (apply 'concat (pt-next-n-values
+				     'pt-pseudo-random-ascii-string-visible
+				     string-length)))
+		   num-strings)))
+    (dolist (str strings)
+      (pipe-write! pipe str)
+      (list-pipe-write! list-pipe str))
+    (should (equal (apply 'concat strings)
+		   (pipe-read-all! pipe)))
+    (should (equal (apply 'concat strings)
+		   (list-pipe-read-all! list-pipe)))))
+
+(defun pt-pipes-write-sexp-read-sexp ()
+  (let* ((pipe (pipe-make-pipe 200))
+	 (list-pipe (list-pipe-make-list-pipe))
+	 (sexps '("abc" def\ ghi 1 21.3 '(j k lm)
+		  [1 two '(three) "four" [five]])))
+
+    (dolist (sexp sexps)
+      (pipe-write-sexp! pipe sexp)
+      (list-pipe-write-sexp! list-pipe sexp))
+
+    (dolist (sexp sexps)
+      (should (equal sexp
+		     (pipe-read-sexp! pipe)))
+      (should (equal sexp
+		     (list-pipe-read-sexp! list-pipe))))))
+
 (provide 'pipe-test)
 ;; pipe-test.el ends here
