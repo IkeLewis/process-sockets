@@ -66,5 +66,21 @@ characters."
   "Return a string of length n containing only null bytes."
   (make-string n 0))
 
+;;; Pipe State Functions
+
+(defun pt-pipe-state (pipe)
+  "Return the state of `pipe'."
+  (pipe-with-pipe pipe
+   (list (pipe-var-ref read-pos) (pipe-var-ref num-writ) buf)))
+
+(defun pt-pipe-state-p (x y buf-size)
+  "Check that the argument list represents a valid pipe state."
+  (unless (> buf-size 0)
+    (error "buf-size must be positive"))
+  (unless (and (<= 0 x) (< x buf-size))
+    (error "First coordinate %s is not between 0 and %s" x (- buf-size 1)))
+  (unless (and (<= 0 y) (<= y buf-size))
+    (error "Second coordinate %s is not between 0 and %s" y buf-size)))
+
 (provide 'pipe-test)
 ;; pipe-test.el ends here
