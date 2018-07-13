@@ -29,12 +29,12 @@
 
 ;;; Code:
 
+;;; Requirements
+
+;; For 'defun*'
 (require 'cl)
-(require 'buffered-streams)
-
-;;; Customizable Variables
-
-(defvar ps-stream-buf-size (* 64 1024) "The default buffer size for the socket's streams.")
+;; For 'pipe-make-pipe'
+(require 'pipe)
 
 ;;; API Functions
 
