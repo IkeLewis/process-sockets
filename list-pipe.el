@@ -78,6 +78,55 @@ modify the pipe."
 
 ;;}}}
 
+;;{{{
+;;; Reading Macros
+
+(defmacro list-pipe-read! (list-pipe &optional unread underflow-handler)
+  "Read a character from `list-pipe'."
+  `(progn
+     (unless (listp ,list-pipe)
+       (error "list-pipe must be a list-pipe"))
+     (let ((_unread2
+	    (cond ((and (stringp ,unread)
+			(equal (length ,unread) 1))
+		   (string-to-char ,unread))
+		  ((or (not ,unread)
+		       (characterp ,unread))
+		   ,unread)
+		  (t
+		   (error "unread must be a character or a string
+	   containing a single character."))))  )
+       (if _unread2
+	   (push _unread2 ,list-pipe)
+	 (or (pop ,list-pipe)
+	     (funcall (or ,underflow-handler
+			  list-pipe-default-underflow-handler)))))))
+
+(defmacro list-pipe-read-ln! (list-pipe)
+  "Read a line from `list-pipe'."
+  `(let ((chars '()))
+     (while (not
+	     (funcall (lambda (chars)
+			(string-suffix-p pipe-default-newline-delim
+					 (concat chars)))
+		      (setf chars (append chars
+					  (list (list-pipe-read! ,list-pipe)))))))
+     (concat chars)))
+
+(defmacro list-pipe-read-sexp! (list-pipe)
+  "Read an sexp from `list-pipe'."
+  `(read (lambda (&optional unread)
+	   (list-pipe-read! ,list-pipe unread))))
+
+
+(defmacro list-pipe-read-all! (list-pipe &optional unread)
+  "Read all available characters from `list-pipe'."
+  `(prog1
+       (concat ,list-pipe)
+     (setf ,list-pipe nil)))
+
+;;}}}
+
 ;;}}}
 
 ;;}}}
