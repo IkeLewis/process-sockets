@@ -60,16 +60,16 @@ Process Sockets API
  Function         | Short Description
 ------------------|------------------------------------------------------
  ps-make-socket   | Make a new process socket.
- ps-write         | Write a character or string to the socket.
- ps-write-ln      | Write a line to the socket.
- ps-write-sexp    | Write an sexp to the socket.
- ps-read          | Read a character from the socket.
- ps-read-ln       | Read a line from the socket.
- ps-read-sexp     | Read an sexp from the socket.
- ps-read-all      | Read all currently available characters into a string.
  ps-input-stream  | Return the socket's buffered input stream.
  ps-output-stream | Return the socket's buffered output stream.
- ps-close         | Close the socket.
+ ps-write!        | Write a character or string to the socket.
+ ps-write-ln!     | Write a line to the socket.
+ ps-write-sexp!   | Write an sexp to the socket.
+ ps-read!         | Read a character from the socket.
+ ps-read-ln!      | Read a line from the socket.
+ ps-read-sexp!    | Read an sexp from the socket.
+ ps-read-all!     | Read all currently available characters into a string.
+ ps-close!        | Close the socket.
 
 Traditional sockets usually have a connect method.  In this
 implementation, process sockets are (currently) "connected" at the
