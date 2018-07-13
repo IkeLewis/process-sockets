@@ -90,29 +90,23 @@
 	(t
 	 (error "Invalid arguments"))))))
 
+;;; Accessors
+
 (defun ps-input-stream (ps)
-  (funcall ps 'input-stream))
+  (pipe-input-stream (funcall ps 'input-pipe)))
 
 (defun ps-output-stream (ps)
-  (funcall ps 'output-stream))
+  (pipe-output-stream (funcall ps 'output-pipe)))
 
-(defun ps-read-char (ps)
-  (funcall ps 'read-char))
+(defun ps-auto-flush (ps)
+  (funcall ps 'auto-flush))
 
-(defun ps-read-sexp (ps)
-  (funcall ps 'read-sexp))
 
-(defun ps-write-string (ps string)
-  (funcall ps 'write-string string))
 
-(defun ps-write-sexp (ps sexp)
-  (funcall ps 'write-sexp sexp))
 
-(defun ps-drain-input (ps)
-  (funcall ps 'drain-input))
 
-(defun ps-close (ps)
-  (funcall ps 'close))
+
+
 
 (provide 'process-sockets)
 ;;; process-sockets.el ends here
