@@ -32,5 +32,17 @@
 ;; For 'ps-make-process-socket'
 (require 'process-sockets)
 
+;;; Debugging and Logging
+
+(defvar pst-debug nil "Whether or not to print debugging messages.")
+
+(defun pst-debug (fmt-str &rest args)
+  "Print a formatted debugging message, where `fmt-str' is a
+format string with arguments `args'."
+  (when pst-debug
+    (print (concat "pst-debug: "
+		   (apply 'format message args)
+		   "\n"))))
+
 (provide' process-sockets-test)
 ;; process-sockets-test.el ends here
