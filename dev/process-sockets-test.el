@@ -44,5 +44,29 @@ format string with arguments `args'."
 		   (apply 'format message args)
 		   "\n"))))
 
+;;; Preparation Functions
+
+(defun pst-prepare-socket (&optional auto-flush)
+  "Prepare a socket for testing.  If `auto-flush' is set to t,
+then all socket operations automatically flush."
+  (let* ((my-proc (start-process "bash-proc1"
+				 (get-buffer-create "bash-proc1")
+				 "/bin/bash"))
+	 (my-sock (ps-make-process-socket my-proc)))
+
+    (ps-set-auto-flush! my-sock auto-flush)
+    (pst-debug "auto-flush: %s" (ps-auto-flush my-sock))
+
+    ;; Wait until the prompt is received
+    (ps-read! my-sock)
+    ;; Discard the prompt characters
+    (ps-read-all! my-sock)
+    ;; Set an empty prompt
+    (ps-write-ln! my-sock "export PS1=\"\"")
+    (unless (ps-auto-flush my-sock)
+      (ps-flush! my-sock))
+
+    my-sock))
+
 (provide' process-sockets-test)
 ;; process-sockets-test.el ends here
