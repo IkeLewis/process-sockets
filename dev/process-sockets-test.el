@@ -137,5 +137,55 @@ then all socket operations automatically flush."
 
     (ps-close! my-sock)))
 
+;;; ERT (Emacs Lisp Regression Testing)
+
+;; Usage:
+;;
+;; To run all the tests from this directory use:
+;;
+;; emacs -batch -l ert -l ../pipe.el -l ../process-sockets.el -l
+;; process-sockets-test.el -f ert-run-tests-batch-and-exit
+;;
+;; Running 7 tests
+;;    passed  1/7  ert-i/o-all
+;;    passed  2/7  ert-i/o-all-auto-flush-disabled
+;;    passed  3/7  ert-i/o-all-auto-flush-enabled
+;;    passed  4/7  ert-output-stream-input-stream!
+;;    passed  5/7  ert-write!-read!
+;;    passed  6/7  ert-write-ln!-read-ln!
+;;    passed  7/7  ert-write-sexp!-read-sexp!
+;;
+;; Ran 7 tests, 7 results as expected
+
+(ert-deftest ert-output-stream-input-stream! ()
+  (let ((my-sock (pst-prepare-socket)))
+    (pst-output-stream-input-stream! my-sock)
+    (ps-close! my-sock)))
+
+(ert-deftest ert-write!-read! ()
+  (let ((my-sock (pst-prepare-socket)))
+    (pst-write!-read! my-sock)
+    (ps-close! my-sock)))
+
+(ert-deftest ert-write-ln!-read-ln! ()
+  (let ((my-sock (pst-prepare-socket)))
+    (pst-write-ln!-read-ln! my-sock)
+    (ps-close! my-sock)))
+
+(ert-deftest ert-write-sexp!-read-sexp! ()
+  (let ((my-sock (pst-prepare-socket)))
+    (pst-write-sexp!-read-sexp! my-sock)
+    (ps-close! my-sock)))
+
+(ert-deftest ert-i/o-all-auto-flush-disabled ()
+  (pst-i/o-all))
+
+(ert-deftest ert-i/o-all-auto-flush-enabled ()
+  (pst-i/o-all t))
+
+(ert-deftest ert-i/o-all ()
+  (pst-i/o-all nil)
+  (pst-i/o-all t))
+
 (provide' process-sockets-test)
 ;; process-sockets-test.el ends here
