@@ -68,5 +68,59 @@ then all socket operations automatically flush."
 
     my-sock))
 
+;;; Individual Tests
+
+(defun pst-output-stream-input-stream! (my-sock)
+  (let ((test-sexp '(PST-OUTPUT-STREAM-INPUT-STREAM!)))
+    (ps-write! my-sock "echo -n '")
+    (prin1 test-sexp (ps-output-stream my-sock))
+    (ps-write-ln! my-sock "'")
+    (unless (ps-auto-flush my-sock)
+      (ps-flush! my-sock))
+    (let ((recv (read (ps-input-stream my-sock))))
+      (pst-debug "pst-output-stream-input-stream!: %s" recv)
+      (should (equal recv test-sexp)))))
+
+(defun pst-write!-read! (my-sock)
+  (let ((test-str "PST-WRITE!-READ!"))
+    (ps-write! my-sock (concat "echo -n 'PST-WRITE!-READ!'"
+			       pipe-default-newline-delim))
+    (unless (ps-auto-flush my-sock)
+      (ps-flush! my-sock))
+    (dotimes (i (length test-str))
+      (let ((char (ps-read! my-sock)))
+	(pst-debug "pst-write!-read!: %c" char)
+	(should (equal (elt test-str i) char))))))
+
+(defun pst-write!-read-all! (my-sock)
+  (let ((test-str "PST-WRITE!-READ-ALL!"))
+    (ps-write! my-sock "echo -n 'Hello world!'\n")
+    (unless (ps-auto-flush my-sock)
+      (ps-flush! my-sock))
+    ;; wait for the input to arrive
+    (let* ((recv (concat (ps-read! my-sock) (ps-read-all! my-sock))))
+      (pst-debug "pst-write!-read-all!: %c%s" )
+      (should (equal recv test-str)))))
+
+(defun pst-write-ln!-read-ln! (my-sock)
+  (let ((test-str "PST-WRITE-LN!-READ-LN!"))
+    (ps-write-ln! my-sock (format "echo '%s'" test-str))
+    (unless (ps-auto-flush my-sock)
+      (ps-flush! my-sock))
+    (let ((recv (ps-read-ln! my-sock)))
+      (pst-debug "pst-write-ln!-read-ln!: %s" recv)
+      (should (equal recv (concat test-str pipe-default-newline-delim))))))
+
+(defun pst-write-sexp!-read-sexp! (my-sock)
+  (let ((test-sexp '(PST-WRITE-SEXP!-READ-SEXP!)))
+    (ps-write! my-sock "echo -n '")
+    (ps-write-sexp! my-sock test-sexp)
+    (ps-write-ln! my-sock "'")
+    (unless (ps-auto-flush my-sock)
+      (ps-flush! my-sock))
+    (let ((recv (ps-read-sexp! my-sock)))
+      (pst-debug "write-sexp!-read-sexp!: %s" recv)
+      (should (equal recv test-sexp)))))
+
 (provide' process-sockets-test)
 ;; process-sockets-test.el ends here
