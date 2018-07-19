@@ -100,6 +100,8 @@
 
 ;; For 'defun*'
 (require 'cl)
+;; For 'string-empty-p'
+(require 'subr-x)
 
 ;;{{{
 ;;; Customizable Variables
