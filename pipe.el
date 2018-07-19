@@ -235,7 +235,7 @@ The following table gives some examples of clockwise substrings.
 		(read-pos . ,(pipe-make-var 0))
 		(buf . ,(make-string buf-size 0))
 		(underflow-handler .,underflow-handler))))
-    (lambda (fn-or-var &rest args)
+    (lambda (fn-or-var)
       (case fn-or-var
 	((env)
 	 env)
