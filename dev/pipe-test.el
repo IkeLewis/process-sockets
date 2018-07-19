@@ -40,6 +40,14 @@
 
 (defvar pt-debug nil "Whether or not to print debugging messages.")
 
+(defun pt-debug (fmt-str &rest args)
+  "Print a formatted debugging message, where `fmt-str' is a
+format string with arguments `args'."
+  (when pt-debug
+    (print (concat "pst-debug: "
+		   (apply 'format message args)
+		   "\n"))))
+
 ;;; Utility Functions
 
 (defun pt-next-n-values (data-src-fn n)
