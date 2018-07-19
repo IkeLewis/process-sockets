@@ -201,7 +201,7 @@ pt-validate-pipe macros."
 					       ,buf-size
 					       ,data-src-fn)))
 
-	   (pt-validate-pipe-core _prev _pipe _list-pipe _next _tran)
+	   (pt-validate-pipes-core _prev _pipe _list-pipe _next _tran)
 
 	   ,@body
 
@@ -224,7 +224,7 @@ pt-validate-pipe macros."
 					     ,buf-size
 					     ,data-src-fn)))
 
-	 (pt-validate-pipe-core _curr _pipe _list-pipe _next _tran)
+	 (pt-validate-pipes-core _curr _pipe _list-pipe _next _tran)
 
 	 ,@body
 
@@ -301,27 +301,27 @@ pt-validate-pipe macros."
 		    (should-error (funcall 'underflow-handler)
 				  :type 'error))))
 
-(ert-deftest ert-test-pipes-write-read-small-buf-size ()
+(ert-deftest ert-test-pipes-write!-read!-small-buf-size ()
   ;; create a buffer of size 2^n
   (let ((n 8))
     (dolist (buf-size (mapcar (lambda (n) (expt 2 n)) (number-sequence 0 n)))
-      (pt-validate-pipe buf-size 'pt-pseudo-random-ascii-string)
-      (pt-pseudo-randomly-validate-pipe buf-size
-					'pt-pseudo-random-ascii-string
-					10))))
+      (pt-validate-pipes buf-size 'pt-pseudo-random-ascii-string)
+      (pt-pseudo-randomly-validate-pipes buf-size
+					 'pt-pseudo-random-ascii-string
+					 10))))
 
-(ert-deftest ert-test-pipes-write-read-default-buf-size ()
-  (pt-pseudo-randomly-validate-pipe pipe-default-buf-size
-				    'pt-pseudo-random-ascii-string
-				    1))
+(ert-deftest ert-test-pipes-write!-read!-default-buf-size ()
+  (pt-pseudo-randomly-validate-pipes pipe-default-buf-size
+				     'pt-pseudo-random-ascii-string
+				     1))
 
-(ert-deftest ert-test-pipes-write-ln-read-ln ()
+(ert-deftest ert-test-pipes-write-ln!-read-ln! ()
   (pt-pipes-write-ln-read-ln))
 
-(ert-deftest ert-test-pipes-write-read-all ()
+(ert-deftest ert-test-pipes-write!-read-all! ()
   (pt-pipes-write-read-all))
 
-(ert-deftest ert-test-pipes-write-sexp-read-sexp ()
+(ert-deftest ert-test-pipes-write-sexp!-read-sexp! ()
   (pt-pipes-write-sexp-read-sexp))
 
 ;;; Rough Benchmarks
