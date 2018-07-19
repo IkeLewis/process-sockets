@@ -288,7 +288,24 @@ pt-validate-pipe macros."
       (should (equal sexp
 		     (list-pipe-read-sexp! list-pipe))))))
 
-;;; ERT Tests
+;;; ERT (Emacs Lisp Regression Testing)
+
+;; Usage:
+;;
+;; To run all the tests from this directory use:
+;;
+;; emacs -L /path/to/dash -batch -l ert -L .. -l pipe-test.el -f
+;; ert-run-tests-batch-and-exit
+;;
+;; Running 6 tests
+;;    passed  1/6  ert-test-pipe-make-pipe
+;;    passed  2/6  ert-test-pipes-write!-read!-default-buf-size
+;;    passed  3/6  ert-test-pipes-write!-read!-small-buf-size
+;;    passed  4/6  ert-test-pipes-write!-read-all!
+;;    passed  5/6  ert-test-pipes-write-ln!-read-ln!
+;;    passed  6/6  ert-test-pipes-write-sexp!-read-sexp!
+;;
+;; Ran 6 tests, 6 results as expected
 
 (ert-deftest ert-test-pipe-make-pipe ()
   (let ((pipe (pipe-make-pipe)))
