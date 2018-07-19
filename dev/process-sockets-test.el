@@ -23,5 +23,14 @@
 ;;; Commentary:
 ;; TODO
 
+;;; Code:
+
+;;; Required Libraries
+
+;; For 'should'
+(require 'ert)
+;; For 'ps-make-process-socket'
+(require 'process-sockets)
+
 (provide' process-sockets-test)
 ;; process-sockets-test.el ends here
