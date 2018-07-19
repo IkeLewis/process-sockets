@@ -47,8 +47,8 @@
   (let* ((process process)
 	 (sock-mutex (make-mutex))
 	 (sock-output-ready nil)
-	 (sock-cv-output-ready (make-condition-variable sock-mutex "sock-cv-output-ready"))
-	 (cv-output-ready (make-condition-variable sock-mutex "cv-output-socket"))
+	 (sock-cv-output-ready
+	  (make-condition-variable sock-mutex "sock-cv-output-ready"))
 	 (input-pipe (pipe-make-pipe
 		      pipe-buf-size
 		      (lambda ()
