@@ -122,5 +122,20 @@ then all socket operations automatically flush."
       (pst-debug "write-sexp!-read-sexp!: %s" recv)
       (should (equal recv test-sexp)))))
 
+;;; Combined Tests
+
+(defun pst-i/o-all (&optional auto-flush)
+  "A basic test of all process socket I/O functions.  (See
+`pst-prepare-socket' for `auto-flush'.)"
+  (let* ((my-sock (pst-prepare-socket auto-flush)))
+
+    ;; Run the individual I/O tests.
+    (pst-output-stream-input-stream! my-sock)
+    (pst-write!-read! my-sock)
+    (pst-write-ln!-read-ln! my-sock)
+    (pst-write-sexp!-read-sexp! my-sock)
+
+    (ps-close! my-sock)))
+
 (provide' process-sockets-test)
 ;; process-sockets-test.el ends here
